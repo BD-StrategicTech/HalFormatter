@@ -1,0 +1,34 @@
+{
+    "name": "budgetdumpster/hal-formatter",
+    "type": "library",
+    "license": "MIT",
+    "description": "HAL Output formatting",
+    "keywords": ["API", "JSON", "HAL"],
+    "homepage": "https://github.com/BD-StrategicTech/HalFormatter",
+    "authors": [
+        {
+            "name": "Matt Frost",
+            "email": "mattf@budgetdumpster.com",
+            "homepage": "https://www.budgetdumpster.com",
+            "role": "developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "BudgetDumpster\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BudgetDumpster\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "nocarrier/hal": "^0.9.12",
+        "php": ">=5.5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.4"
+    }
+}
+
