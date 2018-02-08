@@ -11,6 +11,12 @@
             "email": "mattf@budgetdumpster.com",
             "homepage": "https://www.budgetdumpster.com",
             "role": "developer"
+        },
+        {
+            "name": "Justin Voelkel",
+            "email": "justin@budgetdumpster.com",
+            "homepage": "https://www.budgetdumpster.com",
+            "role": "developer"
         }
     ],
     "autoload": {

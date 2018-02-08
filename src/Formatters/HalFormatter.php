@@ -91,6 +91,21 @@ class HalFormatter extends Hal
      */
     private function addEmbeddedResources($resources, $key, $uri)
     {
+        $count = 0;
+
+        if ($resources instanceof \Illuminate\Database\Eloquent\Collection) {
+            $count = $resources->count();
+        }
+
+        if (is_array($resources)) {
+            $count = count($resources);
+        }
+
+        if ($count < 1) {
+            $this->addEmptyResource($key);
+            return;
+        }
+
         foreach ($resources as $resource) {
             $this->addEmbeddedResource($resource, $key, $uri);
         }
@@ -109,5 +124,16 @@ class HalFormatter extends Hal
         if (isset($this->data[$property])) {
             unset($this->data[$property]);
         }
+    }
+
+    /**
+     * Method to add an empty resource to the collection
+     *
+     * @param string $key
+     */
+    private function addEmptyResource($key)
+    {
+        $resource = new Hal(null,[]);
+        $this->addResource($key, $resource);
     }
 }
