@@ -18,19 +18,25 @@ class HalFormatter extends Hal
     protected $data;
 
     /**
+     * @var array
+     */
+    protected $modelData;
+
+    /**
      * Method to return a HAL formatted version of the data
      * that was passed into this method
      *
      * @param mixed $model
      * @param string $uri
-     * @param array embedded
+     * @param array $embedded
+     * @param boolean $remove
      * @return string
      */
     public function formatResource($model, $uri = '', array $embedded = [])
     {
-        $this->data = json_decode(json_encode($model), true);
+        $this->modelData = json_decode(json_encode($model), true);
         $this->prepareEmbeddedResources($embedded, $model);
-        $this->setData($this->data);
+        $this->setData($this->modelData);
         $this->setUri($uri);
         return $this->asJson(true);
     }
