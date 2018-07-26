@@ -23,6 +23,11 @@ class HalFormatter extends Hal
     protected $modelData;
 
     /**
+     * @var string
+     */
+    protected $linkProperty = 'linkedModels';
+
+    /**
      * Method to return a HAL formatted version of the data
      * that was passed into this method
      *
@@ -38,6 +43,7 @@ class HalFormatter extends Hal
         $this->prepareEmbeddedResources($embedded, $model);
         $this->setData($this->modelData);
         $this->setUri($uri);
+        $this->setLinks($model);
         return $this->asJson(true);
     }
 
@@ -59,7 +65,7 @@ class HalFormatter extends Hal
                 $this->addEmbeddedResource($model->$model_property, $key, $value['uri']);
             }
 
-            if (isset($this->data[$value['property']])) {
+            if (isset($this->modelData[$value['property']])) {
                 $this->removeProperty($value['property']);
             }
         }
@@ -127,8 +133,8 @@ class HalFormatter extends Hal
      */
     private function removeProperty($property)
     {
-        if (isset($this->data[$property])) {
-            unset($this->data[$property]);
+        if (isset($this->modelData[$property])) {
+            unset($this->modelData[$property]);
         }
     }
 
@@ -141,5 +147,44 @@ class HalFormatter extends Hal
     {
         $resource = new Hal(null,[]);
         $this->addResource($key, $resource);
+    }
+
+    /**
+     * Setting the ability to add additional links to a resource
+     *
+     * @param mixed $model
+     * @return void
+     */
+    public function setLinks($model)
+    {
+        $property = $this->linkProperty;
+        if (!isset($model->$property) || empty($model->$property)) {
+            return;
+        }
+
+        foreach ($model->$property as $link) {
+            $this->addLink($link, $this->getUri() . '/' . $link);
+        }
+    }
+
+    /**
+     * Set the link property
+     *
+     * @param string $property
+     * @return self
+     */
+    public function setLinkProperty($property)
+    {
+        $this->linkProperty = $property;
+    }
+
+    /**
+     * Get the link property
+     *
+     * @return string
+     */
+    public function getLinkProperty()
+    {
+        return $this->linkProperty;
     }
 }

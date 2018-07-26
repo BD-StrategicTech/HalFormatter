@@ -18,11 +18,20 @@ class HalFormatterTest extends TestCase
     private $formatter;
 
     /**
+     * @var Illuminate\Database\Eloquent\Collection
+     */
+    private $collection;
+
+    /**
      * Test Setup method
      */
     protected function setUp()
     {
         $this->formatter = new HalFormatter();
+        $this->collection = $this->getMockBuilder('\Illuminate\Database\Eloquent\Collection')
+            ->setMethods(['count'])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -31,6 +40,7 @@ class HalFormatterTest extends TestCase
     protected function tearDown()
     {
         unset($this->formatter);
+        unset($this->collection);
     }
 
     /**
@@ -92,5 +102,56 @@ class HalFormatterTest extends TestCase
         $this->assertArrayHasKey('_embedded', $response_array);
         $this->assertEquals($response_array['_embedded']['foo'][0]['id'], $foo->id);
         $this->assertEquals($response_array['_embedded']['foo'][0]['_links']['self']['href'], '/foo/'. $foo->id);
+    }
+
+    /**
+     * Test to ensure the link property can be set
+     */
+    public function testLinkPropertyCanBeSet()
+    {
+        $property = 'links';
+        $this->formatter->setLinkProperty($property);
+        $this->assertEquals($this->formatter->getLinkProperty(), $property);
+    }
+
+    /**
+     * Test to ensure the set links method will generate links
+     */
+    public function testSetLinksMethodGeneratesLinks()
+    {
+        $model = new \stdClass;
+        $model->id = 1;
+        $model->name = 'test';
+        $model->linkedModels = ['widgets'];
+        $data = $this->formatter->formatResource($model, '/test/123');
+        $array = json_decode($data, true);
+        $this->assertContains('/test/123/widgets', $data);
+    }
+
+    /**
+     * Test to ensure an empty collection inserts an empty item
+     */
+    public function testEmptyCollectionInsertsItem()
+    {
+        $this->collection->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue(0));
+
+        $embedded = [
+            'test' => [
+                'property' => 'test',
+                'key' => 'test',
+                'uri' => 'test'
+            ]
+        ]; 
+
+        $model = new \stdClass;
+        $model->id = 1;
+        $model->name = 'test';
+        $model->test = $this->collection;
+
+        $resource = $this->formatter->formatResource($model, '/widget/1234', $embedded);
+        $array = json_decode($resource, true);
+        $this->assertEmpty($array['_embedded']['test']);
     }
 }
