@@ -169,7 +169,7 @@ class HalFormatter extends Hal
 
         // set the individual links
         foreach ($model->$property['individual'] as $module => $field) {
-            $this->addLink($link, '/' . $module . '/' . $model->$field);
+            $this->addLink($module, '/' . $module . '/' . $model->$field);
         }
     }
 
