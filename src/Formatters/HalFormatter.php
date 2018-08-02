@@ -162,8 +162,14 @@ class HalFormatter extends Hal
             return;
         }
 
-        foreach ($model->$property as $link) {
+        // set the collection links
+        foreach ($model->$property['collection'] as $link) {
             $this->addLink($link, $this->getUri() . '/' . $link);
+        }
+
+        // set the individual links
+        foreach ($model->$property['individual'] as $module => $field) {
+            $this->addLink($link, '/' . $module . '/' . $model->$field);
         }
     }
 

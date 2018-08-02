@@ -122,10 +122,12 @@ class HalFormatterTest extends TestCase
         $model = new \stdClass;
         $model->id = 1;
         $model->name = 'test';
-        $model->linkedModels = ['widgets'];
+        $model->doodad_id = '123456';
+        $model->linkedModels = ['collection' => ['widgets'], 'individual' => ['doodad' => 'doodad_id']];
         $data = $this->formatter->formatResource($model, '/test/123');
         $array = json_decode($data, true);
         $this->assertContains('/test/123/widgets', $data);
+        $this->assertContains('/doodad/123456', $data);
     }
 
     /**
